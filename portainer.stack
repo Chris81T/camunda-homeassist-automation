@@ -1,0 +1,33 @@
+version: '2'
+services:
+ # Camunda 7.14 supported PostgreSQL 9.4 / 9.6 / 10.4 / 10.7 / 11.1 / 11.2 / 12.2
+  postgres:
+    image: postgres:12.2-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: camunda
+      POSTGRES_USER: camundadb
+      POSTGRES_PASSWORD: CamHom3assio!
+    volumes: # Es werden ausschließlich Docker Volumes genutzt
+      - camunda-volume:/var/lib/postgresql/data
+    networks:
+      - camunda-network
+
+  camunda:
+    image: camunda-homeassist-automation:latest
+    restart: always
+    ports:
+      - 7140:8080
+    networks:
+      - camunda-network
+    depends_on:
+      - postgres
+
+volumes:
+  camunda-volume:
+    external: true
+
+networks:
+  camunda-network:
+    external:
+      name: camunda-network
